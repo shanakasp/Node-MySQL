@@ -12,34 +12,43 @@ const pool = mysql
   .promise();
 
 async function getNotes() {
-  const result = await pool.query("SELECT * FROM notes");
-  const rows = result[0];
-  return rows;
+  try {
+    const result = await pool.query("SELECT * FROM notes");
+    const rows = result[0];
+    return rows;
+  } catch (error) {
+    console.error("Error fetching notes:", error);
+    throw error;
+  }
 }
-
-// const results = await getNotes();
-// console.log(results);
 
 async function getNote(id) {
-  const [rows] = await pool.query(
-    `SELECT * FROM notes
-      WHERE id = ?`,
-    [id]
-  );
-  return rows[0];
+  try {
+    const [rows] = await pool.query(
+      `SELECT * FROM notes
+        WHERE id = ?`,
+      [id]
+    );
+    return rows[0];
+  } catch (error) {
+    console.error(`Error fetching note with id ${id}:`, error);
+    throw error;
+  }
 }
 
-const note = await getNote(1);
-console.log(note);
+async function createNote(title, content) {
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO notes (title, content)
+        VALUES (?, ?)`,
+      [title, content]
+    );
+    const id = result.insertId;
+    return getNote(id);
+  } catch (error) {
+    console.error("Error creating note:", error);
+    throw error;
+  }
+}
 
-// async funtion createNote(title, content)
-// {
-//     const [result] = await pool.query
-//     (
-//         `INSERT INTO notes (title, content)
-//         VALUES (?, ?)`,
-//         [title, content])
-//         const id= result.insertId
-//         return getNote(id)
-
-// }
+export { createNote, getNote, getNotes };
