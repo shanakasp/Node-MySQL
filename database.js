@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import mysql from "mysql2";
 dotenv.config();
 
 const pool = mysql
@@ -16,27 +17,29 @@ async function getNotes() {
   return rows;
 }
 
+// const results = await getNotes();
+// console.log(results);
+
 async function getNote(id) {
-  const [rows] = await pool.query;
-  {
+  const [rows] = await pool.query(
     `SELECT * FROM notes
-        WHERE id = ?`,
-      [id];
-  }
+      WHERE id = ?`,
+    [id]
+  );
   return rows[0];
 }
 
-async funtion createNote(title, content) 
-{
-    const [result] = await pool.query
-    (
-        `INSERT INTO notes (title, content) 
-        VALUES (?, ?)`,
-        [title, content])
-        const id= result.insertId
-        return getNote(id)
-    
-}
+const note = await getNote(1);
+console.log(note);
 
-const results = await createNote('test', 'test');
-console.log(results);
+// async funtion createNote(title, content)
+// {
+//     const [result] = await pool.query
+//     (
+//         `INSERT INTO notes (title, content)
+//         VALUES (?, ?)`,
+//         [title, content])
+//         const id= result.insertId
+//         return getNote(id)
+
+// }
